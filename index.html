@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NLH Media — Sports Videography</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ===== RESET ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: #000;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ===== CURSOR ===== */
+    .cursor {
+      width: 10px; height: 10px;
+      background: #fff;
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s;
+      mix-blend-mode: difference;
+    }
+    .cursor-ring {
+      width: 38px; height: 38px;
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9998;
+      transform: translate(-50%, -50%);
+    }
+    .cursor.big { width: 56px; height: 56px; }
+
+    /* ===== NAV ===== */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 200;
+      padding: 28px 48px;
+      display: flex; justify-content: space-between; align-items: center;
+      mix-blend-mode: difference;
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px; letter-spacing: 0.18em;
+      color: #fff; text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 40px; list-style: none; }
+    .nav-links a {
+      color: #fff; text-decoration: none;
+      font-size: 12px; letter-spacing: 0.14em;
+      text-transform: uppercase; font-weight: 500;
+      transition: opacity 0.2s;
+    }
+    .nav-links a:hover { opacity: 0.5; }
+
+    /* ===== HERO ===== */
+    #hero {
+      position: relative; width: 100%; height: 100vh;
+      overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hero-video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; z-index: 0;
+    }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.35) 0%,
+        rgba(0,0,0,0.15) 35%,
+        rgba(0,0,0,0.55) 75%,
+        rgba(0,0,0,0.92) 100%
+      );
+      z-index: 1;
+    }
+    .hero-content {
+      position: relative; z-index: 2;
+      text-align: center; padding: 0 24px;
+    }
+    .hero-eyebrow {
+      font-size: 11px; letter-spacing: 0.32em;
+      text-transform: uppercase; color: rgba(255,255,255,0.55);
+      margin-bottom: 18px; font-weight: 400;
+      opacity: 0; transform: translateY(18px);
+      animation: fadeUp 0.8s ease forwards 0.4s;
+    }
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(88px, 15vw, 200px);
+      line-height: 0.88; letter-spacing: 0.04em; color: #fff;
+      opacity: 0; transform: translateY(28px);
+      animation: fadeUp 1s ease forwards 0.65s;
+    }
+    .hero-tagline {
+      font-size: clamp(13px, 1.6vw, 17px);
+      font-weight: 300; color: rgba(255,255,255,0.68);
+      letter-spacing: 0.07em; margin-top: 28px;
+      opacity: 0; transform: translateY(18px);
+      animation: fadeUp 0.8s ease forwards 1s;
+    }
+    .hero-cta {
+      display: inline-block; margin-top: 52px;
+      padding: 15px 50px;
+      border: 1px solid rgba(255,255,255,0.8);
+      color: #fff; text-decoration: none;
+      font-size: 12px; letter-spacing: 0.22em;
+      text-transform: uppercase; font-weight: 500;
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 1.25s;
+    }
+    .hero-cta:hover { background: #fff; color: #000; border-color: #fff; }
+    .scroll-hint {
+      position: absolute; bottom: 38px; left: 50%;
+      transform: translateX(-50%); z-index: 2;
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      opacity: 0; animation: fadeIn 1s ease forwards 1.8s;
+    }
+    .scroll-hint-text {
+      font-size: 10px; letter-spacing: 0.25em;
+      text-transform: uppercase; color: rgba(255,255,255,0.35);
+    }
+    .scroll-hint-line {
+      width: 1px; height: 56px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.5), transparent);
+      animation: pulse 2.2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+
+    /* ===== MARQUEE ===== */
+    .marquee-wrap {
+      overflow: hidden;
+      padding: 32px 0;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .marquee-track {
+      display: flex; gap: 56px;
+      animation: marquee 22s linear infinite;
+      white-space: nowrap; width: max-content;
+    }
+    .marquee-item {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 17px; letter-spacing: 0.22em;
+      color: rgba(255,255,255,0.18); text-transform: uppercase;
+    }
+    .marquee-sep { color: rgba(255,255,255,0.1); font-size: 10px; }
+    @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+    /* ===== SERVICES ===== */
+    #services { padding: 150px 0; }
+    .section-label {
+      font-size: 10px; letter-spacing: 0.32em;
+      text-transform: uppercase; color: rgba(255,255,255,0.35);
+      text-align: center; margin-bottom: 90px;
+    }
+    .service-row {
+      display: grid;
+      grid-template-columns: 90px 1fr auto;
+      align-items: center;
+      padding: 56px 10vw;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      gap: 48px;
+      opacity: 0; transform: translateX(-32px);
+      transition: opacity 0.75s ease, transform 0.75s ease;
+    }
+    .service-row:last-child { border-bottom: 1px solid rgba(255,255,255,0.07); }
+    .service-row.is-visible { opacity: 1; transform: translateX(0); }
+    .service-row:nth-child(2) { transition-delay: 0.08s; }
+    .service-row:nth-child(3) { transition-delay: 0.16s; }
+    .service-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 72px; line-height: 1;
+      color: rgba(255,255,255,0.06); user-select: none;
+    }
+    .service-body {}
+    .service-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(34px, 4.5vw, 60px);
+      line-height: 1; letter-spacing: 0.02em; margin-bottom: 14px;
+    }
+    .service-desc {
+      font-size: 14px; color: rgba(255,255,255,0.42);
+      font-weight: 300; line-height: 1.75; max-width: 480px;
+    }
+    .service-arrow {
+      font-size: 28px; color: rgba(255,255,255,0.12);
+      font-weight: 300; user-select: none;
+    }
+
+    /* ===== REELS ===== */
+    #reels { padding: 100px 5vw; }
+    .reels-header {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 40px; padding: 0 1vw;
+    }
+    .reels-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(52px, 8vw, 110px);
+      line-height: 1; letter-spacing: 0.02em;
+    }
+    .reels-meta {
+      font-size: 12px; color: rgba(255,255,255,0.35);
+      letter-spacing: 0.12em; text-transform: uppercase;
+      padding-bottom: 12px;
+    }
+    .reels-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+    .reel-item {
+      position: relative; overflow: hidden;
+      aspect-ratio: 9/16; background: #0d0d0d; cursor: pointer;
+      opacity: 0; transform: translateY(28px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .reel-item:nth-child(1){ transition-delay: 0s; }
+    .reel-item:nth-child(2){ transition-delay: 0.12s; }
+    .reel-item:nth-child(3){ transition-delay: 0.24s; }
+    .reel-item.is-visible { opacity: 1; transform: translateY(0); }
+    .reel-item video {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.55s ease;
+    }
+    .reel-item:hover video { transform: scale(1.05); }
+    .reel-hover {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.35);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .reel-item:hover .reel-hover { opacity: 1; }
+    .play-btn {
+      width: 54px; height: 54px;
+      border: 1.5px solid rgba(255,255,255,0.8);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .play-btn:hover { background: rgba(255,255,255,0.1); }
+    .play-btn svg { width: 18px; height: 18px; fill: #fff; margin-left: 3px; }
+    .reel-border {
+      position: absolute; inset: 0;
+      border: 1px solid transparent;
+      transition: border-color 0.3s; pointer-events: none;
+    }
+    .reel-item:hover .reel-border { border-color: rgba(255,255,255,0.22); }
+    .reel-label {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 48px 20px 20px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.75));
+      font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .reel-item:hover .reel-label { opacity: 1; }
+
+    /* ===== ABOUT ===== */
+    #about {
+      padding: 60px 0;
+      display: grid; grid-template-columns: 62% 1fr;
+      gap: 0; align-items: center;
+    }
+    .about-left {
+      position: relative;
+      opacity: 0; transform: translateX(-36px);
+      transition: opacity 0.85s ease, transform 0.85s ease;
+    }
+    .about-left.is-visible { opacity: 1; transform: translateX(0); }
+    .about-video-frame {
+      position: relative; overflow: hidden;
+      aspect-ratio: 4/3; background: #000;
+    }
+    .about-video-frame img {
+      width: 100%; height: 100%; object-fit: cover; object-position: top center;
+      display: block;
+      -webkit-mask-image: linear-gradient(to right, black 65%, transparent 100%);
+      mask-image: linear-gradient(to right, black 65%, transparent 100%);
+    }
+    .about-frame-border {
+      position: absolute; inset: 0;
+      pointer-events: none;
+    }
+    .about-photo-hint { display: none; }
+    .about-right {
+      opacity: 0; transform: translateX(36px);
+      transition: opacity 0.85s ease 0.2s, transform 0.85s ease 0.2s;
+      padding-right: 10vw;
+    }
+    .about-right.is-visible { opacity: 1; transform: translateX(0); }
+    .about-eyebrow {
+      font-size: 10px; letter-spacing: 0.3em;
+      text-transform: uppercase; color: rgba(255,255,255,0.35);
+      margin-bottom: 28px;
+    }
+    .about-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(52px, 7vw, 92px);
+      line-height: 0.92; letter-spacing: 0.02em;
+      margin-bottom: 36px;
+    }
+    .about-copy {
+      font-size: 15px; font-weight: 300;
+      line-height: 1.85; color: rgba(255,255,255,0.58);
+      margin-bottom: 48px;
+    }
+    .about-copy p + p { margin-top: 20px; }
+    .about-nlh {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px; letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.22); text-transform: uppercase;
+    }
+
+    /* ===== CONTACT ===== */
+    #contact { padding: 80px 10vw; }
+    .contact-head {
+      margin-bottom: 48px;
+      opacity: 0; transform: translateY(28px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .contact-head.is-visible { opacity: 1; transform: translateY(0); }
+    .contact-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(48px, 7vw, 96px);
+      line-height: 0.92; letter-spacing: 0.02em;
+    }
+    .contact-sub {
+      font-size: 14px; color: rgba(255,255,255,0.35);
+      margin-top: 20px; font-weight: 300; letter-spacing: 0.04em;
+    }
+    .contact-form {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 32px 40px;
+      opacity: 0; transform: translateY(28px);
+      transition: opacity 0.7s ease 0.2s, transform 0.7s ease 0.2s;
+    }
+    .contact-form.is-visible { opacity: 1; transform: translateY(0); }
+    .field { display: flex; flex-direction: column; gap: 10px; }
+    .field.wide { grid-column: 1 / -1; }
+    .field label {
+      font-size: 10px; letter-spacing: 0.24em;
+      text-transform: uppercase; color: rgba(255,255,255,0.55);
+    }
+    .field input, .field select, .field textarea {
+      background: transparent; border: none;
+      border-bottom: 1px solid rgba(255,255,255,0.25);
+      color: #fff; font-family: 'Inter', sans-serif;
+      font-size: 15px; font-weight: 400;
+      padding: 12px 0; outline: none;
+      transition: border-color 0.3s;
+      -webkit-appearance: none;
+    }
+    .field input::placeholder, .field textarea::placeholder { color: rgba(255,255,255,0.35); }
+    .field input:focus, .field select:focus, .field textarea:focus { border-bottom-color: rgba(255,255,255,0.7); }
+    .field select option { background: #111; color: #fff; }
+    .field textarea { resize: none; height: 90px; }
+    .form-actions { grid-column: 1 / -1; margin-top: 8px; }
+    .btn-send {
+      padding: 17px 58px; background: #fff; color: #000;
+      border: 1px solid #fff; font-family: 'Inter', sans-serif;
+      font-size: 12px; font-weight: 600; letter-spacing: 0.22em;
+      text-transform: uppercase; cursor: none;
+      transition: background 0.3s, color 0.3s;
+    }
+    .btn-send:hover { background: transparent; color: #fff; }
+
+    /* ===== GEO / FAQ ===== */
+    #faq {
+      padding: 60px 10vw;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+    .geo-inner { max-width: 1200px; margin: 0 auto; }
+    .geo-top {
+      display: flex; align-items: center;
+      margin-bottom: 32px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding-bottom: 14px;
+    }
+    .geo-label {
+      font-size: 10px; letter-spacing: 0.28em;
+      text-transform: uppercase; color: rgba(255,255,255,0.3);
+    }
+    .geo-body {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
+    }
+
+    /* FAQ always-visible */
+    .faq-list { display: flex; flex-direction: column; gap: 0; list-style: none; }
+    .faq-item { border-bottom: 1px solid rgba(255,255,255,0.07); padding: 14px 0; }
+    .faq-item dt {
+      font-size: 13px; font-weight: 500;
+      color: rgba(255,255,255,0.8);
+      letter-spacing: 0.02em; margin-bottom: 6px;
+    }
+    .faq-item dd {
+      font-size: 13px; font-weight: 300;
+      color: rgba(255,255,255,0.42); line-height: 1.7;
+      margin: 0;
+    }
+
+    /* Tables */
+    .geo-tables {}
+    .geo-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 12px;
+    }
+    .geo-table thead tr th {
+      font-size: 10px; letter-spacing: 0.22em;
+      text-transform: uppercase; color: rgba(255,255,255,0.3);
+      text-align: left; padding: 0 0 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      font-weight: 400;
+    }
+    .geo-table tbody tr {
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .geo-table tbody tr:last-child { border-bottom: none; }
+    .geo-table tbody td {
+      padding: 10px 12px 10px 0;
+      color: rgba(255,255,255,0.5);
+      font-weight: 300; line-height: 1.4;
+      vertical-align: top;
+    }
+    .geo-table tbody td:first-child { color: rgba(255,255,255,0.75); font-weight: 500; }
+
+    /* ===== FOOTER ===== */
+    footer {
+      padding: 72px 0 40px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      position: relative; overflow: hidden;
+    }
+    .footer-giant {
+      position: relative;
+      height: clamp(100px, 18vw, 240px);
+      margin-bottom: 56px; overflow: hidden;
+    }
+    .footer-giant-text {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(96px, 17vw, 230px);
+      line-height: 0.85; letter-spacing: 0.04em;
+      text-align: center; color: #fff;
+      position: relative; z-index: 1; white-space: nowrap;
+      user-select: none;
+    }
+    .footer-video-over {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      mix-blend-mode: multiply;
+      z-index: 2; pointer-events: none; opacity: 0.85;
+    }
+    .footer-bottom {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 28px 10vw 0;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .footer-copy { font-size: 11px; color: rgba(255,255,255,0.2); letter-spacing: 0.05em; }
+    .footer-links { display: flex; gap: 28px; }
+    .footer-links a {
+      font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(255,255,255,0.3); text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: #fff; }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { to { opacity: 1; } }
+  </style>
+</head>
+<body>
+
+  <!-- Cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">NLH</a>
+    <ul class="nav-links">
+      <li><a href="#reels">Work</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <video class="hero-video" id="heroVideo" autoplay muted loop playsinline>
+      <source src="hero-video.mp4" type="video/mp4">
+    </video>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Sports Videography</p>
+      <h1 class="hero-title">NLH<br>MEDIA</h1>
+      <p class="hero-tagline">Every moment. Every play. Never lose hope.</p>
+      <a href="#contact" class="hero-cta">Let's Work</a>
+    </div>
+    <div class="scroll-hint">
+      <span class="scroll-hint-text">Scroll</span>
+      <div class="scroll-hint-line"></div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <span class="marquee-item">Game Film</span>
+      <span class="marquee-sep">◆</span>
+      <span class="marquee-item">Highlight Reels</span>
+      <span class="marquee-sep">◆</span>
+      <span class="marquee-item">School Programs</span>
+      <span class="marquee-sep">◆</span>
+      <span class="marquee-item">Player Profiles</span>
+      <span class="marquee-sep">◆</span>
+      <span class="marquee-item">Recruiting Content</span>
+      <span class="marquee-sep">◆</span>
+      <span class="marquee-item">Event Coverage</span>
+      <span class="marquee-sep">◆</span>
+      <span class="marquee-item">Game Film</span>
+      <span class="marquee-sep">◆</span>
+      <span class="marquee-item">Highlight Reels</span>
+      <span class="marquee-sep">◆</span>
+      <span class="marquee-item">School Programs</span>
+      <span class="marquee-sep">◆</span>
+      <span class="marquee-item">Player Profiles</span>
+      <span class="marquee-sep">◆</span>
+      <span class="marquee-item">Recruiting Content</span>
+      <span class="marquee-sep">◆</span>
+      <span class="marquee-item">Event Coverage</span>
+      <span class="marquee-sep">◆</span>
+    </div>
+  </div>
+
+  <!-- SERVICES -->
+  <section id="services">
+    <p class="section-label">What We Do</p>
+
+    <div class="service-row" data-animate>
+      <span class="service-num">01</span>
+      <div class="service-body">
+        <h3 class="service-title">Game Film That Gets You Noticed</h3>
+        <p class="service-desc">Professional coverage of every snap, shot, and play — delivered fast and edited for impact so coaches see exactly what they need to see.</p>
+      </div>
+      <span class="service-arrow">→</span>
+    </div>
+
+    <div class="service-row" data-animate>
+      <span class="service-num">02</span>
+      <div class="service-body">
+        <h3 class="service-title">Highlight Reels Built to Recruit</h3>
+        <p class="service-desc">Your best moments, cut to precision. Every reel is crafted to move fast, hit hard, and leave the impression that gets you the call.</p>
+      </div>
+      <span class="service-arrow">→</span>
+    </div>
+
+    <div class="service-row" data-animate>
+      <span class="service-num">03</span>
+      <div class="service-body">
+        <h3 class="service-title">Your Story — Told the Right Way</h3>
+        <p class="service-desc">From school programs to individual athletes, we build content that tells your story the way it deserves to be told — every frame, every play.</p>
+      </div>
+      <span class="service-arrow">→</span>
+    </div>
+  </section>
+
+  <!-- REELS -->
+  <section id="reels">
+    <div class="reels-header">
+      <h2 class="reels-title">The Work</h2>
+      <span class="reels-meta">NLH Media — 2024/25</span>
+    </div>
+    <div class="reels-grid">
+
+      <div class="reel-item" data-animate>
+        <video autoplay muted loop playsinline>
+          <source src="../SaveInta.com_AQNL2LseKOoB35bXCsNldFpcViRIiNcCn10O8UcQXByjAiba-gTJqQ4-HlOibAskq5drvGuBuw4c8mks6EEpau7UPGh-cFAVi34CzPA.mp4" type="video/mp4">
+        </video>
+        <div class="reel-hover">
+          <div class="play-btn">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+        <div class="reel-label">Basketball</div>
+        <div class="reel-border"></div>
+      </div>
+
+      <div class="reel-item" data-animate>
+        <video autoplay muted loop playsinline>
+          <source src="../SaveInta.com_AQMue4WGzsfL_86MeaZB6hpSKMuhUCbRSHe4ejA8TLdDZjlEQoRkFJfyLgrWF-L1d7XY9xCbTKEbohLge_IDpJYQRCv7q9fdXVHIOIo.mp4" type="video/mp4">
+        </video>
+        <div class="reel-hover">
+          <div class="play-btn">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+        <div class="reel-label">Football</div>
+        <div class="reel-border"></div>
+      </div>
+
+      <div class="reel-item" data-animate>
+        <video autoplay muted loop playsinline>
+          <source src="../SaveInta.com_AQP9osjs6whWdQtN-cCOsbzNP61UMRQB_pQiAvVyx43PXkQnU45icamhMsiuPr3AqgxImmferscp0azx4MD_MhVsHAuTxjFzSmYj3RU.mp4" type="video/mp4">
+        </video>
+        <div class="reel-hover">
+          <div class="play-btn">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+        <div class="reel-label">Behind the Lens</div>
+        <div class="reel-border"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="about-left" data-animate>
+      <div class="about-video-frame">
+        <img src="tj-photo.jpg" alt="TJ — NLH Media">
+        <div class="about-frame-border"></div>
+      </div>
+    </div>
+    <div class="about-right" data-animate>
+      <p class="about-eyebrow">Behind the Lens</p>
+      <h2 class="about-name">Meet<br>TJ</h2>
+      <div class="about-copy">
+        <p>TJ founded NLH Media with one belief — every athlete deserves film that tells their story. From Friday night lights to varsity championship runs, NLH captures the plays, the pressure, and the passion that make sports worth watching.</p>
+        <p>Working directly with schools, programs, and individual athletes across the region, TJ delivers pro-grade sports content at every level — fast, clean, and built to get you seen.</p>
+      </div>
+      <p class="about-nlh">NLH — Never Lose Hope.</p>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="contact-head" data-animate>
+      <h2 class="contact-title">Ready<br>to be Seen?</h2>
+      <p class="contact-sub">Fill out the form and TJ will be in touch within 24 hours.</p>
+    </div>
+    <form class="contact-form" data-animate onsubmit="handleSubmit(event)">
+      <div class="field">
+        <label>Name</label>
+        <input type="text" placeholder="Your full name" required>
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" placeholder="your@email.com" required>
+      </div>
+      <div class="field">
+        <label>School / Team</label>
+        <input type="text" placeholder="Team or school name">
+      </div>
+      <div class="field">
+        <label>Service</label>
+        <select>
+          <option value="">Select a service</option>
+          <option>Game Film</option>
+          <option>Highlight Reel</option>
+          <option>Player Profile</option>
+          <option>School Program Package</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Date</label>
+        <input type="date">
+      </div>
+      <div class="field">
+        <label>Instagram (optional)</label>
+        <input type="text" placeholder="@handle">
+      </div>
+      <div class="field wide">
+        <label>Message</label>
+        <textarea placeholder="Tell TJ about your event, team, or what you're trying to build..."></textarea>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn-send">Send It →</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- GEO SECTION -->
+  <section id="faq" aria-label="Frequently Asked Questions and Services">
+    <div class="geo-inner">
+
+      <div class="geo-top">
+        <span class="geo-label">FAQ</span>
+        <span class="geo-label" style="margin-left:auto">Services & Info</span>
+      </div>
+
+      <div class="geo-body">
+
+        <!-- FAQ column -->
+        <dl class="faq-list">
+          <div class="faq-item">
+            <dt>What sports does NLH Media cover?</dt>
+            <dd>NLH Media covers all high school and youth sports including football, basketball, baseball, soccer, track, volleyball, and more. If your team plays, TJ can film it.</dd>
+          </div>
+          <div class="faq-item">
+            <dt>How long does it take to receive my highlight reel?</dt>
+            <dd>Most highlight reels and game film packages are delivered within 3–5 business days after the event. Rush delivery is available upon request.</dd>
+          </div>
+          <div class="faq-item">
+            <dt>Do you work with individual athletes or only schools?</dt>
+            <dd>Both. NLH Media works directly with school programs, coaching staffs, and individual athletes who need recruiting content or personal highlight packages.</dd>
+          </div>
+          <div class="faq-item">
+            <dt>What areas does NLH Media serve?</dt>
+            <dd>NLH Media is based in the Florida Panhandle and serves schools and athletes across the Gulf Coast region. Travel is available for select events.</dd>
+          </div>
+        </dl>
+
+        <!-- Tables column -->
+        <div class="geo-tables">
+          <table class="geo-table" aria-label="Services offered by NLH Media">
+            <thead>
+              <tr><th colspan="2">Services</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Game Film</td><td>Full event coverage, edited for review</td></tr>
+              <tr><td>Highlight Reel</td><td>Recruiting-ready athlete packages</td></tr>
+              <tr><td>Player Profile</td><td>Bio + best plays in one video</td></tr>
+              <tr><td>School Package</td><td>Season-long program coverage</td></tr>
+              <tr><td>Social Content</td><td>Short-form clips for Instagram & TikTok</td></tr>
+            </tbody>
+          </table>
+
+          <table class="geo-table" aria-label="Sports covered by NLH Media" style="margin-top:20px">
+            <thead>
+              <tr><th colspan="2">Sports Covered</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Football</td><td>Basketball</td></tr>
+              <tr><td>Baseball / Softball</td><td>Soccer</td></tr>
+              <tr><td>Volleyball</td><td>Track & Field</td></tr>
+              <tr><td>Wrestling</td><td>Golf</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-giant">
+      <h2 class="footer-giant-text">NLH MEDIA</h2>
+      <video class="footer-video-over" autoplay muted loop playsinline>
+        <source src="SaveInta.com_AQNL2LseKOoB35bXCsNldFpcViRIiNcCn10O8UcQXByjAiba-gTJqQ4-HlOibAskq5drvGuBuw4c8mks6EEpau7UPGh-cFAVi34CzPA.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2025 NLH Media. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#">Instagram</a>
+        <a href="#">Email TJ</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ===== CURSOR =====
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px';
+      cursor.style.top = my + 'px';
+    });
+
+    (function animRing() {
+      rx += (mx - rx) * 0.11;
+      ry += (my - ry) * 0.11;
+      ring.style.left = rx + 'px';
+      ring.style.top = ry + 'px';
+      requestAnimationFrame(animRing);
+    })();
+
+    document.querySelectorAll('a, button, .reel-item').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('big'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
+    });
+
+    // ===== SCROLL ANIMATIONS =====
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('is-visible'); });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('[data-animate]').forEach(el => observer.observe(el));
+
+    // ===== HERO PARALLAX =====
+    window.addEventListener('scroll', () => {
+      const s = window.scrollY;
+      const v = document.getElementById('heroVideo');
+      if (v && s < window.innerHeight) v.style.transform = `translateY(${s * 0.28}px)`;
+    }, { passive: true });
+
+    // ===== REEL CLICK TO UNMUTE =====
+    document.querySelectorAll('.reel-item').forEach(item => {
+      const vid = item.querySelector('video');
+      item.addEventListener('click', () => {
+        const wasMuted = vid.muted;
+        document.querySelectorAll('.reel-item video').forEach(v => v.muted = true);
+        if (wasMuted) { vid.muted = false; vid.play(); }
+      });
+    });
+
+    // ===== FORM =====
+    function handleSubmit(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('.btn-send');
+      btn.textContent = 'Sent ✓';
+      btn.style.background = 'transparent';
+      btn.style.color = '#fff';
+      setTimeout(() => {
+        btn.textContent = 'Send It →';
+        btn.style.background = '#fff';
+        btn.style.color = '#000';
+        e.target.reset();
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
