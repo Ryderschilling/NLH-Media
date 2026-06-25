@@ -4,9 +4,112 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NLH Media — Sports Videography</title>
+  <meta name="description" content="NLH Media delivers professional sports videography, highlight reels, and game film for high school athletes in the Florida Panhandle. Get seen. Get recruited.">
+  <link rel="canonical" href="https://nlh-media.vercel.app/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="NLH Media">
+  <meta property="og:url" content="https://nlh-media.vercel.app/">
+  <meta property="og:title" content="NLH Media — Sports Videography">
+  <meta property="og:description" content="Professional sports videography, highlight reels, and game film for high school athletes in the Florida Panhandle. Get seen. Get recruited.">
+  <meta property="og:image" content="https://nlh-media.vercel.app/tj-photo.jpg">
+
+  <!-- Twitter / X Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="NLH Media — Sports Videography">
+  <meta name="twitter:description" content="Professional sports videography, highlight reels, and game film for high school athletes in the Florida Panhandle. Get seen. Get recruited.">
+  <meta name="twitter:image" content="https://nlh-media.vercel.app/tj-photo.jpg">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://nlh-media.vercel.app/#organization",
+        "name": "NLH Media",
+        "url": "https://nlh-media.vercel.app/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://nlh-media.vercel.app/tj-photo.jpg"
+        },
+        "description": "Professional sports videography, highlight reels, and game film for high school and youth athletes in the Florida Panhandle.",
+        "slogan": "Never Lose Hope.",
+        "areaServed": "Florida Panhandle, Gulf Coast",
+        "sameAs": []
+      },
+      {
+        "@type": "LocalBusiness",
+        "@id": "https://nlh-media.vercel.app/#localbusiness",
+        "name": "NLH Media",
+        "description": "Professional sports videography and highlight reel production for high school athletes in the Florida Panhandle.",
+        "url": "https://nlh-media.vercel.app/",
+        "image": "https://nlh-media.vercel.app/tj-photo.jpg",
+        "priceRange": "$$",
+        "address": {
+          "@type": "PostalAddress",
+          "addressRegion": "FL",
+          "addressCountry": "US"
+        },
+        "serviceType": "Sports Videography"
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://nlh-media.vercel.app/#webpage",
+        "url": "https://nlh-media.vercel.app/",
+        "name": "NLH Media — Sports Videography",
+        "description": "NLH Media delivers professional sports videography, highlight reels, and game film for high school athletes in the Florida Panhandle.",
+        "datePublished": "2025-01-01",
+        "dateModified": "2026-06-25",
+        "publisher": { "@id": "https://nlh-media.vercel.app/#organization" }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What sports does NLH Media cover?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "NLH Media covers all high school and youth sports including football, basketball, baseball, soccer, track, volleyball, and more. If your team plays, TJ can film it."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How long does it take to receive my highlight reel?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Most highlight reels and game film packages are delivered within 3–5 business days after the event. Rush delivery is available upon request."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Do you work with individual athletes or only schools?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Both. NLH Media works directly with school programs, coaching staffs, and individual athletes who need recruiting content or personal highlight packages."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What areas does NLH Media serve?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "NLH Media is based in the Florida Panhandle and serves schools and athletes across the Gulf Coast region. Travel is available for select events."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
   <style>
     /* ===== RESET ===== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -512,7 +615,7 @@
 
   <!-- HERO -->
   <section id="hero">
-    <video class="hero-video" id="heroVideo" autoplay muted loop playsinline>
+    <video class="hero-video" id="heroVideo" autoplay muted loop playsinline preload="auto" fetchpriority="high">
       <source src="hero-video.mp4" type="video/mp4">
     </video>
     <div class="hero-overlay"></div>
@@ -768,7 +871,7 @@
     </div>
     <div class="footer-giant">
       <h2 class="footer-giant-text">NLH MEDIA</h2>
-      <video class="footer-video-over" autoplay muted loop playsinline>
+      <video class="footer-video-over" autoplay muted loop playsinline preload="none">
         <source src="hero-video.mp4" type="video/mp4">
       </video>
     </div>
