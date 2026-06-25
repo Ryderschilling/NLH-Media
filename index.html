@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>NLH Media — Sports Videography</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' fill='black'/><text x='50%' y='54%' dominant-baseline='middle' text-anchor='middle' font-family='Arial Black,sans-serif' font-weight='900' font-size='22' fill='white' letter-spacing='1'>NLH</text></svg>">
   <meta name="description" content="NLH Media delivers professional sports videography, highlight reels, and game film for high school athletes in the Florida Panhandle. Get seen. Get recruited.">
   <link rel="canonical" href="https://nlh-media.vercel.app/">
 
@@ -118,12 +119,13 @@
   <style>
     /* ===== RESET ===== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; overflow-x: hidden; max-width: 100%; }
     body {
       background: #000;
       color: #fff;
       font-family: 'Inter', sans-serif;
       overflow-x: hidden;
+      max-width: 100%;
       cursor: none;
     }
 
@@ -230,7 +232,7 @@
     }
     .hero-cta:hover { background: #fff; color: #000; border-color: #fff; }
     .scroll-hint {
-      position: absolute; bottom: 38px; left: 50%;
+      position: absolute; bottom: 12px; left: 50%;
       transform: translateX(-50%); z-index: 2;
       display: flex; flex-direction: column; align-items: center; gap: 10px;
       opacity: 0; animation: fadeIn 1s ease forwards 1.8s;
@@ -358,71 +360,136 @@
     }
     .service-row:hover .service-arrow { color: #fff; transform: translateX(8px); }
 
-    /* ===== REELS ===== */
-    #reels { padding: 100px 5vw; }
-    .reels-header {
-      display: flex; justify-content: space-between; align-items: flex-end;
-      margin-bottom: 40px; padding: 0 1vw;
+    /* ===== FEED / REELS ===== */
+    #reels { padding: 80px 5vw 120px; overflow: hidden; position: relative; z-index: 1; }
+
+    /* Feed header */
+    .feed-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 24px; padding: 0 1vw;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding-bottom: 20px;
     }
-    .reels-title {
+    .feed-profile { display: flex; align-items: center; gap: 16px; }
+    .feed-avatar {
+      width: 44px; height: 44px; border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
       font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(52px, 8vw, 110px);
-      line-height: 1; letter-spacing: 0.02em;
+      font-size: 13px; letter-spacing: 0.1em; color: rgba(255,255,255,0.7);
     }
-    .reels-meta {
-      font-size: 12px; color: rgba(255,255,255,0.35);
-      letter-spacing: 0.12em; text-transform: uppercase;
-      padding-bottom: 12px;
+    .feed-handle {
+      font-size: 14px; font-weight: 500; color: #fff; letter-spacing: 0.02em;
     }
-    .reels-grid {
+    .feed-tagline {
+      font-size: 11px; color: rgba(255,255,255,0.35);
+      letter-spacing: 0.05em; margin-top: 2px;
+    }
+    .feed-follow-btn {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 24px;
+      border: 1px solid rgba(255,255,255,0.25);
+      color: #fff; text-decoration: none;
+      font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+      font-weight: 500; transition: background 0.3s, border-color 0.3s;
+    }
+    .feed-follow-btn:hover { background: #fff; color: #000; border-color: #fff; }
+
+    /* Feed grid */
+    .feed-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 10px;
+      grid-template-columns: 1fr 1.8fr;
+      gap: 8px; height: auto;
     }
-    .reel-item {
+    .feed-card--tall { aspect-ratio: 9/16; }
+    .feed-card--wide { aspect-ratio: 16/9; }
+    .feed-card--square { aspect-ratio: 1/1; }
+    .feed-cta-card { aspect-ratio: 1/1; }
+    .feed-right {
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .feed-bottom-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    }
+
+    /* Cards */
+    .feed-card {
       position: relative; overflow: hidden;
-      aspect-ratio: 4/5; background: #0d0d0d; cursor: pointer;
-      opacity: 0; transform: translateY(28px);
-      transition: opacity 0.65s ease, transform 0.65s ease;
+      background: #0d0d0d; cursor: pointer;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
     }
-    .reel-item:nth-child(1){ transition-delay: 0s; }
-    .reel-item:nth-child(2){ transition-delay: 0.12s; }
-    .reel-item:nth-child(3){ transition-delay: 0.24s; }
-    .reel-item.is-visible { opacity: 1; transform: translateY(0); }
-    .reel-item video {
+    .feed-card.is-visible { opacity: 1; transform: translateY(0); }
+    .feed-card:nth-child(1) { transition-delay: 0s; }
+    .feed-card:nth-child(2) { transition-delay: 0.1s; }
+    .feed-card--tall { align-self: stretch; }
+    .feed-card--wide { }
+    .feed-card--square { }
+    .feed-card video {
       width: 100%; height: 100%; object-fit: cover;
-      transition: transform 0.55s ease;
+      transition: transform 0.5s ease;
     }
-    .reel-item:hover video { transform: scale(1.05); }
-    .reel-hover {
+    .feed-card:hover video { transform: scale(1.04); }
+
+    /* Card overlay */
+    .feed-card-overlay {
       position: absolute; inset: 0;
-      background: rgba(0,0,0,0.35);
+      background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%);
+      display: flex; flex-direction: column;
+      justify-content: space-between; padding: 14px;
+      transition: background 0.3s;
+    }
+    .feed-card:hover .feed-card-overlay {
+      background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 60%);
+    }
+    .feed-tag {
+      align-self: flex-start;
+      font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(255,255,255,0.7); font-weight: 500;
+      background: rgba(0,0,0,0.4);
+      padding: 4px 10px; backdrop-filter: blur(4px);
+    }
+    .feed-card-bottom { display: flex; justify-content: flex-end; }
+    .feed-play-icon {
+      width: 36px; height: 36px;
+      border: 1px solid rgba(255,255,255,0.5); border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
       opacity: 0; transition: opacity 0.3s;
     }
-    .reel-item:hover .reel-hover { opacity: 1; }
-    .play-btn {
-      width: 54px; height: 54px;
-      border: 1.5px solid rgba(255,255,255,0.8);
-      border-radius: 50%;
+    .feed-card:hover .feed-play-icon { opacity: 1; }
+
+    /* Follow CTA card */
+    .feed-cta-card {
+      background: #0d0d0d;
+      border: 1px solid rgba(255,255,255,0.08);
       display: flex; align-items: center; justify-content: center;
-      transition: background 0.2s;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease 0.3s, transform 0.6s ease 0.3s, border-color 0.3s;
+      cursor: pointer;
     }
-    .play-btn:hover { background: rgba(255,255,255,0.1); }
-    .play-btn svg { width: 18px; height: 18px; fill: #fff; margin-left: 3px; }
-    .reel-border {
-      position: absolute; inset: 0;
-      border: 1px solid transparent;
-      transition: border-color 0.3s; pointer-events: none;
+    .feed-cta-card.is-visible { opacity: 1; transform: translateY(0); }
+    .feed-cta-card:hover { border-color: rgba(255,255,255,0.3); }
+    .feed-cta-inner {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 12px; padding: 20px; text-align: center;
     }
-    .reel-item:hover .reel-border { border-color: rgba(255,255,255,0.22); }
-    .reel-label { display: none; }
+    .feed-cta-text {
+      font-size: 12px; color: rgba(255,255,255,0.4);
+      font-weight: 300; letter-spacing: 0.05em; line-height: 1.5;
+    }
+    .feed-cta-link {
+      font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: #fff; text-decoration: none; font-weight: 500;
+      transition: opacity 0.2s;
+    }
+    .feed-cta-link:hover { opacity: 0.6; }
 
     /* ===== ABOUT ===== */
     #about {
-      padding: 60px 0;
+      padding: 120px 0 60px;
       display: grid; grid-template-columns: 62% 1fr;
       gap: 0; align-items: center;
+      clear: both;
     }
     .about-left {
       position: relative;
@@ -670,6 +737,104 @@
     /* ===== ANIMATIONS ===== */
     @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
     @keyframes fadeIn { to { opacity: 1; } }
+
+    /* ===== MOBILE ===== */
+    @media (max-width: 768px) {
+
+      /* Hide cursor on touch */
+      .cursor, .cursor-ring { display: none; }
+      body { cursor: auto; }
+      a, button { cursor: pointer; }
+
+      /* Nav */
+      nav { padding: 20px 24px; }
+      .nav-links { display: none; }
+
+      /* Hero */
+      .hero-title { font-size: clamp(72px, 20vw, 110px); }
+      .hero-tagline { font-size: 13px; padding: 0 16px; }
+      .hero-cta { margin-top: 36px; padding: 14px 36px; }
+      .scroll-hint { display: none; }
+
+      /* Logo bar */
+      .logo-bar { gap: 32px; padding: 20px 24px; flex-wrap: wrap; justify-content: center; }
+      .logo-bar-label { width: 100%; text-align: center; }
+      .logo-bar-logos { gap: 32px; flex-wrap: wrap; justify-content: center; }
+      .logo-bar img { height: 38px; }
+
+      /* Services */
+      #services { padding: 80px 0; }
+      .service-row {
+        grid-template-columns: 1fr;
+        padding: 40px 24px;
+        gap: 16px;
+      }
+      .service-num {
+        font-size: 80px;
+        right: 16px;
+      }
+      .service-title { font-size: clamp(28px, 8vw, 44px); }
+      .service-arrow { display: none; }
+      /* Mobile active state (replaces hover) */
+      .service-row.is-active .service-video-bg { opacity: 1; }
+      .service-row.is-active .service-video-overlay { opacity: 1; }
+      .service-row.is-active .service-num { color: rgba(255,255,255,0.07); }
+
+      /* Feed */
+      #reels { padding: 60px 16px 24px; }
+      .feed-header { flex-direction: column; align-items: flex-start; gap: 14px; }
+      .feed-follow-btn { width: 100%; justify-content: center; }
+      .feed-grid {
+        grid-template-columns: 1fr 1.8fr;
+        gap: 6px;
+        height: 380px;
+      }
+      .feed-card--tall { aspect-ratio: unset; height: 100%; }
+      .feed-card--wide { aspect-ratio: unset; flex: 1; min-height: 0; }
+      .feed-card--square { aspect-ratio: unset; height: 100%; }
+      .feed-cta-card { aspect-ratio: unset; height: 100%; }
+      .feed-right { display: flex; flex-direction: column; gap: 6px; height: 100%; }
+      .feed-bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; flex: 1; min-height: 0; }
+      .feed-tag { display: none; }
+      .feed-handle { font-size: 13px; }
+      .feed-cta-text { font-size: 11px; }
+      .feed-cta-link { font-size: 10px; }
+      .feed-cta-inner { gap: 8px; padding: 12px; }
+      .feed-cta-inner svg { width: 24px; height: 24px; }
+
+      /* About */
+      #about {
+        grid-template-columns: 1fr;
+        padding: 16px 0 40px;
+      }
+      .about-video-frame {
+        aspect-ratio: 4/3;
+      }
+      .about-video-frame img {
+        -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+        mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+      }
+      .about-right {
+        padding: 32px 24px;
+      }
+      .about-name { font-size: clamp(48px, 12vw, 72px); }
+
+      /* Contact */
+      #contact { padding: 60px 24px; }
+      .contact-title { font-size: clamp(48px, 12vw, 80px); }
+      .contact-form { grid-template-columns: 1fr; gap: 24px; }
+
+      /* FAQ / Tables */
+      #faq { padding: 40px 24px; }
+      .geo-body { grid-template-columns: 1fr; gap: 32px; }
+      .geo-table { font-size: 11px; }
+
+      /* Footer */
+      .footer-follow { padding: 24px 0 20px; gap: 12px; }
+      .footer-giant { height: clamp(60px, 14vw, 100px); margin-bottom: 32px; }
+      .footer-giant-text { font-size: clamp(60px, 14vw, 100px); }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; padding: 20px 24px 0; }
+    }
   </style>
 </head>
 <body>
@@ -721,7 +886,7 @@
     <p class="section-label">What We Do</p>
 
     <div class="service-row" data-animate>
-      <video class="service-video-bg" muted loop playsinline>
+      <video class="service-video-bg" muted loop playsinline style="object-position: center 35%;">
         <source src="SaveInta.com_AQMue4WGzsfL_86MeaZB6hpSKMuhUCbRSHe4ejA8TLdDZjlEQoRkFJfyLgrWF-L1d7XY9xCbTKEbohLge_IDpJYQRCv7q9fdXVHIOIo.mp4" type="video/mp4">
       </video>
       <div class="service-video-overlay"></div>
@@ -777,51 +942,85 @@
 
   <!-- REELS -->
   <section id="reels">
-    <div class="reels-header">
-      <h2 class="reels-title">The Work</h2>
-      <span class="reels-meta">NLH Media — 2024/25</span>
+
+    <!-- Feed Header -->
+    <div class="feed-header">
+      <div class="feed-profile">
+        <div class="feed-avatar">
+          <span>NLH</span>
+        </div>
+        <div class="feed-profile-info">
+          <p class="feed-handle">@nlhmedia</p>
+          <p class="feed-tagline">Sports Videography · Florida Panhandle</p>
+        </div>
+      </div>
+      <a href="https://www.instagram.com/nlh.ent/" class="feed-follow-btn" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+        Follow on Instagram
+      </a>
     </div>
-    <div class="reels-grid">
 
-      <div class="reel-item" data-animate>
+    <!-- Feed Grid -->
+    <div class="feed-grid">
+
+      <!-- Tall featured card -->
+      <div class="feed-card feed-card--tall" data-animate>
         <video autoplay muted loop playsinline>
-          <source src="../SaveInta.com_AQNL2LseKOoB35bXCsNldFpcViRIiNcCn10O8UcQXByjAiba-gTJqQ4-HlOibAskq5drvGuBuw4c8mks6EEpau7UPGh-cFAVi34CzPA.mp4" type="video/mp4">
+          <source src="SaveInta.com_AQMue4WGzsfL_86MeaZB6hpSKMuhUCbRSHe4ejA8TLdDZjlEQoRkFJfyLgrWF-L1d7XY9xCbTKEbohLge_IDpJYQRCv7q9fdXVHIOIo.mp4" type="video/mp4">
         </video>
-        <div class="reel-hover">
-          <div class="play-btn">
-            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <div class="feed-card-overlay">
+          <span class="feed-tag">Football</span>
+          <div class="feed-card-bottom">
+            <span class="feed-play-icon">
+              <svg viewBox="0 0 24 24" fill="white" width="18" height="18"><path d="M8 5v14l11-7z"/></svg>
+            </span>
           </div>
         </div>
-        <div class="reel-label">Basketball</div>
-        <div class="reel-border"></div>
       </div>
 
-      <div class="reel-item" data-animate>
-        <video autoplay muted loop playsinline>
-          <source src="../SaveInta.com_AQMue4WGzsfL_86MeaZB6hpSKMuhUCbRSHe4ejA8TLdDZjlEQoRkFJfyLgrWF-L1d7XY9xCbTKEbohLge_IDpJYQRCv7q9fdXVHIOIo.mp4" type="video/mp4">
-        </video>
-        <div class="reel-hover">
-          <div class="play-btn">
-            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      <!-- Right column -->
+      <div class="feed-right">
+
+        <div class="feed-card feed-card--wide" data-animate>
+          <video autoplay muted loop playsinline>
+            <source src="SaveInta.com_AQNL2LseKOoB35bXCsNldFpcViRIiNcCn10O8UcQXByjAiba-gTJqQ4-HlOibAskq5drvGuBuw4c8mks6EEpau7UPGh-cFAVi34CzPA.mp4" type="video/mp4">
+          </video>
+          <div class="feed-card-overlay">
+            <span class="feed-tag">Game Film</span>
+            <div class="feed-card-bottom">
+              <span class="feed-play-icon">
+                <svg viewBox="0 0 24 24" fill="white" width="18" height="18"><path d="M8 5v14l11-7z"/></svg>
+              </span>
+            </div>
           </div>
         </div>
-        <div class="reel-label">Football</div>
-        <div class="reel-border"></div>
-      </div>
 
-      <div class="reel-item" data-animate>
-        <video autoplay muted loop playsinline>
-          <source src="../SaveInta.com_AQP9osjs6whWdQtN-cCOsbzNP61UMRQB_pQiAvVyx43PXkQnU45icamhMsiuPr3AqgxImmferscp0azx4MD_MhVsHAuTxjFzSmYj3RU.mp4" type="video/mp4">
-        </video>
-        <div class="reel-hover">
-          <div class="play-btn">
-            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <div class="feed-bottom-row">
+          <div class="feed-card feed-card--square" data-animate>
+            <video autoplay muted loop playsinline>
+              <source src="SaveInta.com_AQP9osjs6whWdQtN-cCOsbzNP61UMRQB_pQiAvVyx43PXkQnU45icamhMsiuPr3AqgxImmferscp0azx4MD_MhVsHAuTxjFzSmYj3RU.mp4" type="video/mp4">
+            </video>
+            <div class="feed-card-overlay">
+              <span class="feed-tag">Highlight Reel</span>
+              <div class="feed-card-bottom">
+                <span class="feed-play-icon">
+                  <svg viewBox="0 0 24 24" fill="white" width="18" height="18"><path d="M8 5v14l11-7z"/></svg>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Follow CTA card -->
+          <div class="feed-cta-card" data-animate>
+            <div class="feed-cta-inner">
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.2" width="32" height="32"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.2" fill="white" stroke="none"/></svg>
+              <p class="feed-cta-text">See every reel, every play</p>
+              <a href="https://www.instagram.com/nlh.ent/" class="feed-cta-link" target="_blank" rel="noopener">Follow @nlhmedia →</a>
+            </div>
           </div>
         </div>
-        <div class="reel-label">Behind the Lens</div>
-        <div class="reel-border"></div>
-      </div>
 
+      </div>
     </div>
   </section>
 
@@ -1041,6 +1240,46 @@
       row.addEventListener('mouseleave', () => { vid.pause(); vid.currentTime = 0; });
     });
 
+    // ===== MOBILE: ONE VIDEO AT A TIME — CLOSEST TO CENTER =====
+    if (window.innerWidth <= 768) {
+      const allServiceRows = document.querySelectorAll('.service-row');
+      let currentActive = null;
+
+      function updateMobileServiceVideo() {
+        const mid = window.innerHeight / 2;
+        let closest = null;
+        let closestDist = Infinity;
+
+        allServiceRows.forEach(row => {
+          const rect = row.getBoundingClientRect();
+          const rowMid = rect.top + rect.height / 2;
+          const dist = Math.abs(rowMid - mid);
+          const onScreen = rect.top < window.innerHeight && rect.bottom > 0;
+          if (onScreen && dist < closestDist) {
+            closestDist = dist;
+            closest = row;
+          }
+        });
+
+        if (closest && closest !== currentActive) {
+          // Deactivate previous
+          if (currentActive) {
+            currentActive.classList.remove('is-active');
+            const prev = currentActive.querySelector('.service-video-bg');
+            if (prev) { prev.pause(); prev.currentTime = 0; }
+          }
+          // Activate closest
+          closest.classList.add('is-active');
+          const vid = closest.querySelector('.service-video-bg');
+          if (vid) vid.play().catch(() => {});
+          currentActive = closest;
+        }
+      }
+
+      window.addEventListener('scroll', updateMobileServiceVideo, { passive: true });
+      updateMobileServiceVideo();
+    }
+
     // ===== HERO PARALLAX =====
     window.addEventListener('scroll', () => {
       const s = window.scrollY;
@@ -1048,12 +1287,13 @@
       if (v && s < window.innerHeight) v.style.transform = `translateY(${s * 0.28}px)`;
     }, { passive: true });
 
-    // ===== REEL CLICK TO UNMUTE =====
-    document.querySelectorAll('.reel-item').forEach(item => {
-      const vid = item.querySelector('video');
-      item.addEventListener('click', () => {
+    // ===== FEED CARD CLICK TO UNMUTE =====
+    document.querySelectorAll('.feed-card').forEach(card => {
+      const vid = card.querySelector('video');
+      if (!vid) return;
+      card.addEventListener('click', () => {
         const wasMuted = vid.muted;
-        document.querySelectorAll('.reel-item video').forEach(v => v.muted = true);
+        document.querySelectorAll('.feed-card video').forEach(v => v.muted = true);
         if (wasMuted) { vid.muted = false; vid.play(); }
       });
     });
