@@ -138,25 +138,26 @@
     }
     @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
 
-    /* ===== MARQUEE ===== */
-    .marquee-wrap {
-      overflow: hidden;
-      padding: 32px 0;
+    /* ===== LOGO BAR ===== */
+    .logo-bar {
+      padding: 28px 0;
       border-top: 1px solid rgba(255,255,255,0.07);
       border-bottom: 1px solid rgba(255,255,255,0.07);
+      display: flex; align-items: center; justify-content: center;
+      gap: 80px;
     }
-    .marquee-track {
-      display: flex; gap: 56px;
-      animation: marquee 22s linear infinite;
-      white-space: nowrap; width: max-content;
+    .logo-bar-label {
+      font-size: 10px; letter-spacing: 0.28em;
+      text-transform: uppercase; color: rgba(255,255,255,0.2);
+      white-space: nowrap;
     }
-    .marquee-item {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 17px; letter-spacing: 0.22em;
-      color: rgba(255,255,255,0.18); text-transform: uppercase;
+    .logo-bar-logos { display: flex; align-items: center; gap: 64px; }
+    .logo-bar img {
+      height: 52px; width: auto;
+      opacity: 0.75;
+      transition: opacity 0.2s;
     }
-    .marquee-sep { color: rgba(255,255,255,0.1); font-size: 10px; }
-    @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+    .logo-bar img:hover { opacity: 1; }
 
     /* ===== SERVICES ===== */
     #services { padding: 150px 0; }
@@ -222,7 +223,7 @@
     }
     .reel-item {
       position: relative; overflow: hidden;
-      aspect-ratio: 9/16; background: #0d0d0d; cursor: pointer;
+      aspect-ratio: 4/5; background: #0d0d0d; cursor: pointer;
       opacity: 0; transform: translateY(28px);
       transition: opacity 0.65s ease, transform 0.65s ease;
     }
@@ -257,15 +258,7 @@
       transition: border-color 0.3s; pointer-events: none;
     }
     .reel-item:hover .reel-border { border-color: rgba(255,255,255,0.22); }
-    .reel-label {
-      position: absolute; bottom: 0; left: 0; right: 0;
-      padding: 48px 20px 20px;
-      background: linear-gradient(transparent, rgba(0,0,0,0.75));
-      font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
-      color: rgba(255,255,255,0.55);
-      opacity: 0; transition: opacity 0.3s;
-    }
-    .reel-item:hover .reel-label { opacity: 1; }
+    .reel-label { display: none; }
 
     /* ===== ABOUT ===== */
     #about {
@@ -460,9 +453,31 @@
       mix-blend-mode: multiply;
       z-index: 2; pointer-events: none; opacity: 0.85;
     }
+    .footer-follow {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 16px; padding: 32px 0 28px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .footer-follow-label {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px; letter-spacing: 0.22em;
+      text-transform: uppercase; color: rgba(255,255,255,0.5);
+    }
+    .footer-socials { display: flex; gap: 24px; }
+    .social-icon {
+      width: 40px; height: 40px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .social-icon:hover { border-color: #fff; color: #fff; }
+    .social-icon svg { width: 16px; height: 16px; }
     .footer-bottom {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 28px 10vw 0;
+      padding: 20px 10vw 0;
       border-top: 1px solid rgba(255,255,255,0.06);
     }
     .footer-copy { font-size: 11px; color: rgba(255,255,255,0.2); letter-spacing: 0.05em; }
@@ -513,33 +528,13 @@
     </div>
   </section>
 
-  <!-- MARQUEE -->
-  <div class="marquee-wrap">
-    <div class="marquee-track">
-      <span class="marquee-item">Game Film</span>
-      <span class="marquee-sep">◆</span>
-      <span class="marquee-item">Highlight Reels</span>
-      <span class="marquee-sep">◆</span>
-      <span class="marquee-item">School Programs</span>
-      <span class="marquee-sep">◆</span>
-      <span class="marquee-item">Player Profiles</span>
-      <span class="marquee-sep">◆</span>
-      <span class="marquee-item">Recruiting Content</span>
-      <span class="marquee-sep">◆</span>
-      <span class="marquee-item">Event Coverage</span>
-      <span class="marquee-sep">◆</span>
-      <span class="marquee-item">Game Film</span>
-      <span class="marquee-sep">◆</span>
-      <span class="marquee-item">Highlight Reels</span>
-      <span class="marquee-sep">◆</span>
-      <span class="marquee-item">School Programs</span>
-      <span class="marquee-sep">◆</span>
-      <span class="marquee-item">Player Profiles</span>
-      <span class="marquee-sep">◆</span>
-      <span class="marquee-item">Recruiting Content</span>
-      <span class="marquee-sep">◆</span>
-      <span class="marquee-item">Event Coverage</span>
-      <span class="marquee-sep">◆</span>
+  <!-- LOGO BAR -->
+  <div class="logo-bar">
+    <span class="logo-bar-label">Trusted by</span>
+    <div class="logo-bar-logos">
+      <img src="MHS-logo-clean.png" alt="Mosley High School">
+      <img src="SWHS-logo-clean.png" alt="South Walton High School">
+      <img src="FHS-logo-clean.png" alt="Freeport High School">
     </div>
   </div>
 
@@ -757,18 +752,29 @@
 
   <!-- FOOTER -->
   <footer>
+    <div class="footer-follow">
+      <p class="footer-follow-label">Follow NLH Media</p>
+      <div class="footer-socials">
+        <a href="#" class="social-icon" aria-label="Instagram">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a href="#" class="social-icon" aria-label="Facebook">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+        <a href="#" class="social-icon" aria-label="YouTube">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none"/></svg>
+        </a>
+      </div>
+    </div>
     <div class="footer-giant">
       <h2 class="footer-giant-text">NLH MEDIA</h2>
       <video class="footer-video-over" autoplay muted loop playsinline>
-        <source src="SaveInta.com_AQNL2LseKOoB35bXCsNldFpcViRIiNcCn10O8UcQXByjAiba-gTJqQ4-HlOibAskq5drvGuBuw4c8mks6EEpau7UPGh-cFAVi34CzPA.mp4" type="video/mp4">
+        <source src="hero-video.mp4" type="video/mp4">
       </video>
     </div>
     <div class="footer-bottom">
       <p class="footer-copy">© 2025 NLH Media. All rights reserved.</p>
-      <div class="footer-links">
-        <a href="#">Instagram</a>
-        <a href="#">Email TJ</a>
-      </div>
+      <a href="mailto:" class="footer-copy" style="text-decoration:none;color:rgba(255,255,255,0.2)">Email TJ</a>
     </div>
   </footer>
 
