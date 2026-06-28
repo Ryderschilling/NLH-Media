@@ -1067,19 +1067,19 @@
     <form class="contact-form" data-animate onsubmit="handleSubmit(event)">
       <div class="field">
         <label>Name</label>
-        <input type="text" placeholder="Your full name" required>
+        <input type="text" name="name" placeholder="Your full name" required>
       </div>
       <div class="field">
         <label>Email</label>
-        <input type="email" placeholder="your@email.com" required>
+        <input type="email" name="email" placeholder="your@email.com" required>
       </div>
       <div class="field">
         <label>School / Team</label>
-        <input type="text" placeholder="Team or school name">
+        <input type="text" name="school" placeholder="Team or school name">
       </div>
       <div class="field">
         <label>Service</label>
-        <select>
+        <select name="service">
           <option value="">Select a service</option>
           <option>Game Film</option>
           <option>Highlight Reel</option>
@@ -1090,15 +1090,15 @@
       </div>
       <div class="field">
         <label>Date</label>
-        <input type="date">
+        <input type="date" name="date">
       </div>
       <div class="field">
         <label>Instagram (optional)</label>
-        <input type="text" placeholder="@handle">
+        <input type="text" name="instagram" placeholder="@handle">
       </div>
       <div class="field wide">
         <label>Message</label>
-        <textarea placeholder="Tell TJ about your event, team, or what you're trying to build..."></textarea>
+        <textarea name="message" placeholder="Tell TJ about your event, team, or what you're trying to build..."></textarea>
       </div>
       <div class="form-actions">
         <button type="submit" class="btn-send">Send It →</button>
@@ -1299,18 +1299,50 @@
     });
 
     // ===== FORM =====
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
       e.preventDefault();
-      const btn = e.target.querySelector('.btn-send');
-      btn.textContent = 'Sent ✓';
-      btn.style.background = 'transparent';
-      btn.style.color = '#fff';
-      setTimeout(() => {
-        btn.textContent = 'Send It →';
-        btn.style.background = '#fff';
-        btn.style.color = '#000';
-        e.target.reset();
-      }, 3000);
+      const form = e.target;
+      const btn = form.querySelector('.btn-send');
+
+      const data = {
+        name:      form.querySelector('[name="name"]').value.trim(),
+        email:     form.querySelector('[name="email"]').value.trim(),
+        school:    form.querySelector('[name="school"]').value.trim(),
+        service:   form.querySelector('[name="service"]').value,
+        date:      form.querySelector('[name="date"]').value,
+        instagram: form.querySelector('[name="instagram"]').value.trim(),
+        message:   form.querySelector('[name="message"]').value.trim(),
+      };
+
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+
+        if (res.ok) {
+          btn.textContent = 'Sent ✓';
+          btn.style.background = 'transparent';
+          btn.style.color = '#fff';
+          setTimeout(() => {
+            btn.textContent = 'Send It →';
+            btn.style.background = '#fff';
+            btn.style.color = '#000';
+            btn.disabled = false;
+            form.reset();
+          }, 3000);
+        } else {
+          btn.textContent = 'Error — Try Again';
+          btn.disabled = false;
+        }
+      } catch {
+        btn.textContent = 'Error — Try Again';
+        btn.disabled = false;
+      }
     }
   </script>
 </body>
