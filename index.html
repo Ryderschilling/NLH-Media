@@ -1607,7 +1607,30 @@
     });
 
     // ===== FORM =====
-    async function handleSubmit(e) {
+    // Where the draft is addressed. Change this one line to retarget the form.
+    const NLH_CONTACT_EMAIL = 'contact@nlh-media.com';
+
+    function buildMailto(d) {
+      const subject = `New Inquiry — ${d.service || 'General'} — ${d.name}`;
+      const body = [
+        `Name: ${d.name}`,
+        `Email: ${d.email}`,
+        `School / Team: ${d.school || '—'}`,
+        `Service: ${d.service || '—'}`,
+        `Date: ${d.date || '—'}`,
+        `Instagram: ${d.instagram || '—'}`,
+        ``,
+        `Message:`,
+        (d.message || '—').slice(0, 1200),
+        ``,
+        `Sent from nlh-media.com`,
+      ].join('\n');
+      return 'mailto:' + NLH_CONTACT_EMAIL
+        + '?subject=' + encodeURIComponent(subject)
+        + '&body=' + encodeURIComponent(body);
+    }
+
+    function handleSubmit(e) {
       e.preventDefault();
       const form = e.target;
       const btn = form.querySelector('.btn-send');
@@ -1622,35 +1645,43 @@
         message:   form.querySelector('[name="message"]').value.trim(),
       };
 
-      btn.textContent = 'Sending...';
-      btn.disabled = true;
+      if (!data.name || !data.email) {
+        btn.textContent = 'Add your name and email';
+        setTimeout(() => { btn.textContent = 'Send It →'; }, 2200);
+        return;
+      }
 
+      // Fire the server copy in the background so TJ gets the lead
+      // even if the visitor never hits send in their mail app.
       try {
-        const res = await fetch('/api/contact', {
+        fetch('/api/contact', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data),
-        });
+          keepalive: true,
+        }).catch(() => {});
+      } catch (_) {}
 
-        if (res.ok) {
-          btn.textContent = 'Sent ✓';
-          btn.style.background = 'transparent';
-          btn.style.color = '#fff';
-          setTimeout(() => {
-            btn.textContent = 'Send It →';
-            btn.style.background = '#fff';
-            btn.style.color = '#000';
-            btn.disabled = false;
-            form.reset();
-          }, 3000);
-        } else {
-          btn.textContent = 'Error — Try Again';
-          btn.disabled = false;
-        }
-      } catch {
-        btn.textContent = 'Error — Try Again';
+      btn.textContent = 'Opening your email...';
+      btn.disabled = true;
+
+      window.location.href = buildMailto(data);
+
+      setTimeout(() => {
+        btn.textContent = 'Draft Opened ✓';
+        btn.style.background = 'transparent';
+        btn.style.color = '#fff';
+        btn.style.border = '1px solid rgba(255,255,255,0.5)';
+      }, 700);
+
+      setTimeout(() => {
+        btn.textContent = 'Send It →';
+        btn.style.background = '#fff';
+        btn.style.color = '#000';
+        btn.style.border = '';
         btn.disabled = false;
-      }
+        form.reset();
+      }, 6000);
     }
 
     // ===== TEAM: scroll motion =====
